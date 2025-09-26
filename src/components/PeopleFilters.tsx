@@ -13,8 +13,7 @@ export const PeopleFilters: React.FC<Props> = ({
   onSearchParams,
   centuries,
 }) => {
-  const { slugPerson } = useParams();
-  const { pathname, search } = useLocation();
+  const { search } = useLocation();
   const [value, setValue] = useState(() => searchParams.get('query') || '');
 
   const getFilterLink = (field: string) => {
@@ -22,12 +21,6 @@ export const PeopleFilters: React.FC<Props> = ({
 
     if (!field) {
       newParams.delete('filter');
-
-      if (slugPerson) {
-        return `/people/${slugPerson}`;
-      } else {
-        return `/people`;
-      }
     } else {
       newParams.set('filter', field);
     }
@@ -94,7 +87,7 @@ export const PeopleFilters: React.FC<Props> = ({
       <p className="panel-tabs" data-cy="SexFilter">
         <Link
           className={classNames({
-            'is-active': pathname === '/people' && !search,
+            'is-active': !search.includes('filter'),
           })}
           to={getFilterLink('')}
         >
