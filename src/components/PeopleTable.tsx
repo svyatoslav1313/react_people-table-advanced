@@ -22,7 +22,7 @@ export const PeopleTable: React.FC<Props> = ({
   const sortBy = searchParams.get('sort') || '';
   const order = searchParams.get('order') || 'asc';
   const filter = searchParams.get('filter') || '';
-  const nameFilter = searchParams.get('nameF') || '';
+  const query = searchParams.get('query') || '';
 
   const getSortLink = (field: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -43,9 +43,12 @@ export const PeopleTable: React.FC<Props> = ({
   };
 
   const filteredPeople = [...people].filter(person => {
-    const nameMatch = person.name
-      .toLowerCase()
-      .includes(nameFilter.toLowerCase());
+    const q = query.toLowerCase();
+
+    const nameMatch =
+      person.name.toLowerCase().includes(q) ||
+      (person.motherName?.toLowerCase().includes(q) ?? false) ||
+      (person.fatherName?.toLowerCase().includes(q) ?? false);
 
     if (filter === 'sexM' && person.sex !== 'm') {
       return false;

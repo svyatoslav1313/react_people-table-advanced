@@ -15,7 +15,7 @@ export const PeopleFilters: React.FC<Props> = ({
 }) => {
   const { slugPerson } = useParams();
   const { pathname, search } = useLocation();
-  const [value, setValue] = useState(() => searchParams.get('nameF') || '');
+  const [value, setValue] = useState(() => searchParams.get('query') || '');
 
   const getFilterLink = (field: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -23,7 +23,11 @@ export const PeopleFilters: React.FC<Props> = ({
     if (!field) {
       newParams.delete('filter');
 
-      return `/people/${slugPerson}`;
+      if (slugPerson) {
+        return `/people/${slugPerson}`;
+      } else {
+        return `/people`;
+      }
     } else {
       newParams.set('filter', field);
     }
@@ -32,7 +36,7 @@ export const PeopleFilters: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    setValue(searchParams.get('nameF') || '');
+    setValue(searchParams.get('query') || '');
   }, [searchParams]);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,9 +46,9 @@ export const PeopleFilters: React.FC<Props> = ({
     const newParams = new URLSearchParams(searchParams);
 
     if (val) {
-      newParams.set('nameF', val);
+      newParams.set('query', val);
     } else {
-      newParams.delete('nameF');
+      newParams.delete('query');
     }
 
     onSearchParams(newParams);
@@ -69,7 +73,15 @@ export const PeopleFilters: React.FC<Props> = ({
     const newParams = new URLSearchParams(searchParams);
 
     newParams.delete('filter');
-    newParams.delete('nameF');
+    newParams.delete('query');
+    newParams.delete('centuries');
+
+    return `?${newParams.toString()}`;
+  };
+
+  const handleClearCenturies = () => {
+    const newParams = new URLSearchParams(searchParams);
+
     newParams.delete('centuries');
 
     return `?${newParams.toString()}`;
@@ -178,15 +190,15 @@ export const PeopleFilters: React.FC<Props> = ({
           </div>
 
           <div className="level-right ml-4">
-            <a
+            <Link
               data-cy="centuryALL"
               className={classNames('button is-success', {
                 'is-outlined': centuries.length !== 0,
               })}
-              href="#/people"
+              to={handleClearCenturies()}
             >
               All
-            </a>
+            </Link>
           </div>
         </div>
       </div>
